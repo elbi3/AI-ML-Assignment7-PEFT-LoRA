@@ -53,3 +53,6 @@ This makes LoRA ideal for practical transfer learning when computational resourc
 - Hugging Face Transformers: [https://huggingface.co/docs/transformers](https://huggingface.co/docs/transformers)  
 - Hugging Face PEFT & LoRA: [https://github.com/huggingface/peft](https://github.com/huggingface/peft)  
 - Emotion Dataset: [https://huggingface.co/datasets/dair-ai/emotion](https://huggingface.co/datasets/dair-ai/emotion)
+
+## Note (December 5)
+During training, my dataset’s `label` values were stored as `torch.tensor` objects rather than plain Python integers, which caused `set(ds["train"]["label"])` to treat every tensor as a unique object instead of grouping them by value. As a result, the code incorrectly inferred that the dataset contained ~16,000 distinct labels, so the model was initialized with a 16k-dimensional classification head. This led to a mismatch when loading the LoRA adapter later, because the saved adapter expected 16,000 output classes while the correct model only has 6.
